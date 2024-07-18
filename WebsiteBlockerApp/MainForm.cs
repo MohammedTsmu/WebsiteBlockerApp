@@ -4,6 +4,7 @@ using System.Linq;
 using System.Timers;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using Microsoft.Win32;
 
 namespace WebsiteBlockerApp
 {
@@ -38,6 +39,8 @@ namespace WebsiteBlockerApp
             statusUpdateTimer = new System.Timers.Timer(1000); // تحديث كل ثانية
             statusUpdateTimer.Elapsed += (sender, e) => UpdateStatus();
             statusUpdateTimer.Start();
+
+            AddToStartup(); // التأكد من إضافة التطبيق إلى بدء التشغيل عند تشغيل التطبيق
         }
 
         private void InitializeComponents()
@@ -207,6 +210,7 @@ namespace WebsiteBlockerApp
         {
             trayIcon.Visible = false; // إخفاء أيقونة التطبيق من منطقة الإعلام
             blocker.RemoveDistractionSites(); // إزالة المواقع التي تشتت الانتباه عند إغلاق التطبيق
+            RemoveFromStartup(); // إزالة التطبيق من بدء التشغيل عند الخروج
             Application.Exit();
         }
 
@@ -220,6 +224,36 @@ namespace WebsiteBlockerApp
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
+        }
+
+        private void AddToStartup()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                {
+                    key.SetValue("WebsiteBlockerApp", "\"" + Application.ExecutablePath + "\"");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error adding to startup: " + ex.Message);
+            }
+        }
+
+        private void RemoveFromStartup()
+        {
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true))
+                {
+                    key.DeleteValue("WebsiteBlockerApp", false);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error removing from startup: " + ex.Message);
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ namespace WebsiteBlockerApp
 
         private readonly List<string> distractionSources = new List<string>
         {
-            // أضف روابط قوائم مواقع تشتت الانتباه هنا
+            "https://raw.githubusercontent.com/DWW256/distracting-websites/main/distracting-websites.txt" // الرابط الحقيقي لقائمة المواقع التي تشتت الانتباه
         };
 
         public Blocker()
