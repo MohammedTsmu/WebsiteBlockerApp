@@ -29,7 +29,7 @@ namespace WebsiteBlockerApp
 
         private readonly List<string> distractionSources = new List<string>
         {
-            "https://raw.githubusercontent.com/DWW256/distracting-websites/main/distracting-websites.txt" // الرابط الحقيقي لقائمة المواقع التي تشتت الانتباه
+            "https://github.com/DWW256/distracting-websites/raw/main/distracting-websites.txt"
         };
 
         public Blocker()
@@ -40,7 +40,6 @@ namespace WebsiteBlockerApp
             pornSitesFilePath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "pornsiteslist.txt");
             distractionSitesFilePath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData), "distractionsiteslist.txt");
             LoadSavedSites();
-            Task.Run(() => LoadSites()).Wait();
         }
 
         private void LoadSavedSites()
@@ -58,7 +57,7 @@ namespace WebsiteBlockerApp
             }
         }
 
-        private async Task LoadSites()
+        public async Task LoadSites()
         {
             IsDownloading = true;
             await LoadSitesFromSources(pornSources, pornSitesFilePath, pornSites);

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using System.Timers;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using Microsoft.Win32;
@@ -23,6 +24,9 @@ namespace WebsiteBlockerApp
 
         public MainForm()
         {
+            // تهيئة blocker قبل استخدامه
+            blocker = new Blocker();
+
             this.btnAddDistractionSite = new Button();
             this.btnRemoveDistractionSite = new Button();
             this.btnToggleFocusMode = new Button();
@@ -31,7 +35,6 @@ namespace WebsiteBlockerApp
             this.lblStatus = new Label();
             this.trayMenu = new ContextMenu();
             this.trayIcon = new NotifyIcon();
-            this.blocker = new Blocker();
 
             InitializeComponents();
             UpdateStatus();
@@ -50,65 +53,74 @@ namespace WebsiteBlockerApp
             // 
             this.btnAddDistractionSite.Location = new System.Drawing.Point(12, 12);
             this.btnAddDistractionSite.Name = "btnAddDistractionSite";
-            this.btnAddDistractionSite.Size = new System.Drawing.Size(150, 23);
-            this.btnAddDistractionSite.TabIndex = 0;
+            this.btnAddDistractionSite.Size = new System.Drawing.Size(150, 30);
             this.btnAddDistractionSite.Text = "Add Distraction Site";
-            this.btnAddDistractionSite.UseVisualStyleBackColor = true;
+            this.btnAddDistractionSite.BackColor = Color.FromArgb(33, 150, 243);
+            this.btnAddDistractionSite.ForeColor = Color.White;
+            this.btnAddDistractionSite.FlatStyle = FlatStyle.Flat;
+            this.btnAddDistractionSite.MouseEnter += (s, e) => { btnAddDistractionSite.BackColor = Color.FromArgb(25, 118, 210); };
+            this.btnAddDistractionSite.MouseLeave += (s, e) => { btnAddDistractionSite.BackColor = Color.FromArgb(33, 150, 243); };
             this.btnAddDistractionSite.Click += new EventHandler(this.BtnAddDistractionSite_Click);
 
             // 
             // btnRemoveDistractionSite
             // 
-            this.btnRemoveDistractionSite.Location = new System.Drawing.Point(12, 41);
+            this.btnRemoveDistractionSite.Location = new System.Drawing.Point(12, 48);
             this.btnRemoveDistractionSite.Name = "btnRemoveDistractionSite";
-            this.btnRemoveDistractionSite.Size = new System.Drawing.Size(150, 23);
-            this.btnRemoveDistractionSite.TabIndex = 1;
+            this.btnRemoveDistractionSite.Size = new System.Drawing.Size(150, 30);
             this.btnRemoveDistractionSite.Text = "Remove Distraction Site";
-            this.btnRemoveDistractionSite.UseVisualStyleBackColor = true;
+            this.btnRemoveDistractionSite.BackColor = Color.FromArgb(244, 67, 54);
+            this.btnRemoveDistractionSite.ForeColor = Color.White;
+            this.btnRemoveDistractionSite.FlatStyle = FlatStyle.Flat;
+            this.btnRemoveDistractionSite.MouseEnter += (s, e) => { btnRemoveDistractionSite.BackColor = Color.FromArgb(211, 47, 47); };
+            this.btnRemoveDistractionSite.MouseLeave += (s, e) => { btnRemoveDistractionSite.BackColor = Color.FromArgb(244, 67, 54); };
             this.btnRemoveDistractionSite.Click += new EventHandler(this.BtnRemoveDistractionSite_Click);
 
             // 
             // btnToggleFocusMode
             // 
-            this.btnToggleFocusMode.Location = new System.Drawing.Point(168, 12);
+            this.btnToggleFocusMode.Location = new System.Drawing.Point(180, 12);
             this.btnToggleFocusMode.Name = "btnToggleFocusMode";
-            this.btnToggleFocusMode.Size = new System.Drawing.Size(150, 52);
-            this.btnToggleFocusMode.TabIndex = 2;
+            this.btnToggleFocusMode.Size = new System.Drawing.Size(150, 66);
             this.btnToggleFocusMode.Text = "Disable Focus Mode";
-            this.btnToggleFocusMode.UseVisualStyleBackColor = true;
+            this.btnToggleFocusMode.BackColor = Color.FromArgb(76, 175, 80);
+            this.btnToggleFocusMode.ForeColor = Color.White;
+            this.btnToggleFocusMode.FlatStyle = FlatStyle.Flat;
+            this.btnToggleFocusMode.MouseEnter += (s, e) => { btnToggleFocusMode.BackColor = Color.FromArgb(56, 142, 60); };
+            this.btnToggleFocusMode.MouseLeave += (s, e) => { btnToggleFocusMode.BackColor = Color.FromArgb(76, 175, 80); };
             this.btnToggleFocusMode.Click += new EventHandler(this.BtnToggleFocusMode_Click);
 
             // 
             // listPornSites
             // 
             this.listPornSites.FormattingEnabled = true;
-            this.listPornSites.Location = new System.Drawing.Point(12, 70);
+            this.listPornSites.Location = new System.Drawing.Point(12, 84);
             this.listPornSites.Name = "listPornSites";
-            this.listPornSites.Size = new System.Drawing.Size(260, 173);
-            this.listPornSites.TabIndex = 3;
+            this.listPornSites.Size = new System.Drawing.Size(318, 95);
+            this.listPornSites.BackColor = Color.White;
 
             // 
             // listDistractionSites
             // 
             this.listDistractionSites.FormattingEnabled = true;
-            this.listDistractionSites.Location = new System.Drawing.Point(278, 70);
+            this.listDistractionSites.Location = new System.Drawing.Point(12, 185);
             this.listDistractionSites.Name = "listDistractionSites";
-            this.listDistractionSites.Size = new System.Drawing.Size(260, 173);
-            this.listDistractionSites.TabIndex = 4;
+            this.listDistractionSites.Size = new System.Drawing.Size(318, 95);
+            this.listDistractionSites.BackColor = Color.White;
 
             // 
             // lblStatus
             // 
-            this.lblStatus.Location = new System.Drawing.Point(12, 250);
+            this.lblStatus.Location = new System.Drawing.Point(12, 290);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(526, 23);
-            this.lblStatus.TabIndex = 5;
+            this.lblStatus.Size = new System.Drawing.Size(318, 23);
             this.lblStatus.Text = "Status";
+            this.lblStatus.ForeColor = Color.Black;
 
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(550, 281);
+            this.ClientSize = new System.Drawing.Size(342, 321);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.listDistractionSites);
             this.Controls.Add(this.listPornSites);
@@ -117,6 +129,10 @@ namespace WebsiteBlockerApp
             this.Controls.Add(this.btnAddDistractionSite);
             this.Name = "MainForm";
             this.Text = "Website Blocker";
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.BackColor = Color.White;
 
             trayMenu.MenuItems.Add("Exit", OnExit);
             trayMenu.MenuItems.Add("Restore", OnRestore);
