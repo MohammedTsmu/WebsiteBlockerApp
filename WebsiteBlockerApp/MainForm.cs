@@ -19,13 +19,15 @@ namespace WebsiteBlockerApp
         private readonly Label lblStatus;
         private readonly NotifyIcon trayIcon;
         private readonly ContextMenu trayMenu;
-        private readonly Blocker blocker;
+        private Blocker blocker;
         private readonly System.Timers.Timer statusUpdateTimer;
 
         public MainForm()
         {
-            // تهيئة blocker قبل استخدامه
+            // تأكد من تهيئة blocker قبل استخدامه
             blocker = new Blocker();
+
+            ShowSplashScreen(); // عرض شاشة البداية
 
             this.btnAddDistractionSite = new Button();
             this.btnRemoveDistractionSite = new Button();
@@ -44,6 +46,14 @@ namespace WebsiteBlockerApp
             statusUpdateTimer.Start();
 
             AddToStartup(); // التأكد من إضافة التطبيق إلى بدء التشغيل عند تشغيل التطبيق
+        }
+
+        private async void ShowSplashScreen()
+        {
+            SplashScreenForm splashScreen = new SplashScreenForm();
+            splashScreen.Show();
+            await blocker.LoadSites(); // تحميل المواقع أثناء عرض شاشة البداية
+            splashScreen.Close();
         }
 
         private void InitializeComponents()
